@@ -94,4 +94,7 @@ encrypted and the result will be stores as `ENC( .... )`.
 
 # Alternative solutions
 
-Hiera-GPG
+[Hiera-GPG](https://github.com/crayfishx/hiera-gpg)
+
+Raziel could be re-written to work as an additional layer on top of
+other backends. So other backends (like Mongo) could be used.
