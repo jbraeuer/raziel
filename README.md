@@ -1,3 +1,8 @@
+Raziel is a Hiera backend, that allows you to encrypt certain Hiera
+keys. So passwords can be securely store (eg. on GitHub).
+
+Raziel works with Puppet 2.7 and Puppet 3.x. Latest tested version is Puppet 3.2.1.
+
 # Intro
 
 We want to treat infrastructure as code. So code is version controlled
