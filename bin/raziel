@@ -1,0 +1,208 @@
+#! /usr/bin/env ruby
+# -*- mode: ruby -*-
+
+require 'pathname'
+
+$: << File.join(File.dirname(Pathname.new(__FILE__).realpath), "..", "lib")
+
+require 'optparse'
+require 'pp'
+require 'yaml'
+require 'logger'
+require 'raziel'
+require 'styledyaml'
+
+class RazielTool
+  include Raziel
+
+  ENC = "yaml.enc"
+  PLAIN = "yaml.plain"
+  KEY = "yaml.key"
+  KEYENC = "yaml.key.asc"
+
+  def initialize(args=ARGV)
+    @args = args
+    @options = {
+      :debug => false,
+    }
+  end
+
+  def debug(msg)
+    puts msg if @options[:debug]
+  end
+
+  def build_parser
+    OptionParser.new do |opts|
+      opts.banner = <<eos
+Usage: #{__FILE__} cmd <path>
+
+Supported commands:
+  edit        Decrypt, Edit, Encrypt - config
+  key:edit    Decrypt, Edit, Encrypt - key settings
+
+  encrypt     Encrypt <file>.yaml.plain     to <file>.yaml.enc
+  decrypt     Decrypt <file>.yaml.enc       to <file>.yaml.plain
+  key:encrypt Encrypt <file>.yaml.key       to <file>.yaml.key.asc
+  key:decrypt Decrypt <file>.yaml.key.asc   to <file>.yaml.key
+
+Supported options:
+eos
+      opts.on( '-h', '--help', 'Display this screen' ) do
+        puts opts
+        exit 0
+      end
+      opts.on( '--debug', 'Enable debug mode') do
+        @options[:debug] = true
+      end
+    end
+  end
+
+  def validate
+    optparse = build_parser
+    args = optparse.parse(@args)
+
+    if args.length != 2
+      warn optparse
+      exit 1
+    end
+
+    @options[:cmd] = args[0]
+    @options[:path] = args[1]
+    return self
+  end
+
+  def load_key(file)
+    debug "Load key: #{file}"
+    return YAML.load_file(file)["password"] if File.file? file
+    return nil
+  end
+
+  def decrypt(path)
+    black = YAML.load_file "#{path}.#{ENC}"
+    key = RazielKeyring.new("#{path}.#{KEYENC}", @options[:debug]).password
+    crypto = RazielCrypto.new(key, @options[:debug])
+
+    red = Raziel.decrypt(black, crypto, true)
+    File.open("#{path}.#{PLAIN}",'w') { |fd| StyledYAML.dump(red, fd) }
+  end
+
+  def encrypt(path)
+    red = YAML.load_file "#{path}.#{PLAIN}"
+    key = RazielKeyring.new("#{path}.#{KEYENC}", @options[:debug]).password
+    crypto = RazielCrypto.new(key, @options[:debug])
+
+    black = Raziel.encrypt(red, crypto)
+    File.open("#{path}.#{ENC}",'w') { |fd| StyledYAML.dump(black, fd) }
+  end
+
+  def key_encrypt(path)
+    debug "Load recipients: #{path}"
+    recipients = YAML.load_file("#{path}.#{KEY}")["recipients"]
+    crypto = GPGME::Crypto.new :always_trust => true, :armor => true
+    enc = crypto.encrypt(File.open("#{path}.#{KEY}"), :recipients => recipients)
+    File.open("#{path}.#{KEYENC}", 'w') { |fd| fd.write(enc.read) }
+  end
+
+  def key_decrypt(path)
+    crypto = GPGME::Crypto.new :passphrase_callback => Raziel.method(:ask_for_passwd)
+    dec = crypto.decrypt(File.open "#{path}.#{KEYENC}")
+    File.open("#{path}.#{KEY}", 'w') { |fd| fd.write(dec.read) }
+  end
+
+  def merge(old_plain,old_crypt,new_plain,new_crypt)
+    return new_crypt unless old_plain and old_crypt
+    merged = new_crypt
+    new_crypt.each do |k,v|
+      if v.is_a? Array
+        merged[k] = merge_array(old_plain[k], old_crypt[k], new_plain[k], v)
+      elsif v.is_a? Hash
+        merged[k] = merge(old_plain[k], old_crypt[k], new_plain[k], v)
+      else
+        merged[k] = merge_item(old_plain[k], old_crypt[k], new_plain[k], v)
+      end
+    end
+    return merged
+  end
+
+  def merge_array(old_plain,old_crypt,new_plain,new_crypt)
+    return new_crypt unless old_plain and old_crypt
+    merged = new_crypt
+    new_crypt.each_with_index do |v,i|
+      if v.is_a? Array
+        merged[i] = merge_array(old_plain[i], old_crypt[i], new_plain[i], v)
+      elsif v.is_a? Hash
+        merged[i] = merge(old_plain[i], old_crypt[i], new_plain[i], v)
+      else
+        merged[i] = merge_item(old_plain[i], old_crypt[i], new_plain[i], v)
+      end
+    end
+  end
+
+  def merge_item(old_plain, old_crypt, new_plain, new_crypt)
+    merged = new_crypt
+    if new_crypt =~ /^ENC\(.*\)$/m
+      if new_plain == old_plain
+        debug "Use existing encoded value: #{old_crypt}"
+        merged = old_crypt
+      end
+    end
+    return merged
+  end
+
+  def edit(path)
+    decrypt(path)
+    old_crypt = YAML.load_file "#{path}.#{ENC}"
+    old_plain = YAML.load_file "#{path}.#{PLAIN}"
+
+    cmd = "#{ENV["EDITOR"]} '#{path}.#{PLAIN}'"
+    res = system *cmd
+    if res and $?.exitstatus == 0
+      encrypt(path)
+      new_crypt = YAML.load_file "#{path}.#{ENC}"
+      new_plain = YAML.load_file "#{path}.#{PLAIN}"
+
+      merged = merge(old_plain, old_crypt, new_plain, new_crypt)
+      File.open("#{path}.#{ENC}", 'w') { |fd| fd.write(merged.to_yaml) }
+
+      File.unlink "#{path}.#{PLAIN}"
+      File.unlink "#{path}.#{PLAIN}~" if File.file? "#{path}.#{PLAIN}~"
+    end
+  end
+
+  def key_edit(path)
+    key_decrypt(path)
+    cmd = "#{ENV["EDITOR"]} '#{path}.#{KEY}'"
+    res = system *cmd
+    if res and $?.exitstatus == 0
+      key_encrypt(path)
+      File.unlink "#{path}.#{KEY}"
+      File.unlink "#{path}.#{KEY}~" if File.file? "#{path}.#{KEY}~"
+    end
+  end
+
+  def run
+    case @options[:cmd]
+    when 'decrypt'
+      decrypt(@options[:path])
+    when 'encrypt'
+      encrypt(@options[:path])
+    when 'edit'
+      edit(@options[:path])
+    when 'key:encrypt'
+      key_encrypt(@options[:path])
+    when 'key:decrypt'
+      key_decrypt(@options[:path])
+    when 'key:edit'
+      key_edit(@options[:path])
+    else
+      raise "Unknown command"
+    end
+  end
+end
+
+begin
+  RazielTool.new.validate.run
+rescue => e
+  warn "Error: #{e.message}\n\t#{e.backtrace.join("\n\t")}"
+  exit 1
+end

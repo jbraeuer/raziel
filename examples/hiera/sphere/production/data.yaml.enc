@@ -1,0 +1,10 @@
+---
+puppet.main: puppetmaster.production
+puppet.master: puppetmaster.production
+mail.root: vagrant@localhost
+mail.secret: ENC(jA0EAwMCDAK9520Mi9BgyS05HAH4JWghyftxzs5o1WfIETzHGqe5tbyyxNGSs5znCF+wUpDHkURJ9L3qhto=)
+mail.ip: ENC(jA0EAwMCrez3U+RIMzFgySEronQkO+dw7E5yp3Q9qF2Ggj4GD46kR+7ShZ1yM/azyQU=)
+net.trusted:
+- 1.2.3.4
+- 3.4.5.6
+- 8.7.6.5

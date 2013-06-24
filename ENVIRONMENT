@@ -1,0 +1,4 @@
+export RUBYLIB="$(pwd)/lib"
+export PATH="$(pwd)/bin:$PATH"
+alias hiera="hiera --config $(pwd)/examples/config.yaml"
+alias raziel="$(pwd)/bin/raziel"

@@ -1,0 +1,21 @@
+---
+#
+# Hiera does not like TABs. Please keep this in mind.
+#
+:backends:
+  - yamlenc
+  - yaml
+
+:logger: console
+
+:hierarchy:
+  - sphere/production/data
+  - sphere/data
+  - data
+  - common
+
+:yaml:
+   :datadir: ./examples/hiera
+
+:yamlenc:
+   :datadir: ./examples/hiera

@@ -1,0 +1,12 @@
+Source: hiera-yamlenc
+Maintainer: Jens Braeuer <braeuer.jens@googlemail.com>
+Section: misc
+Priority: optional
+Standards-Version: 2.0.1
+Build-Depends: debhelper (>= 8)
+
+Package: hiera-yamlenc
+Architecture: all
+Depends: ${misc:Depends}, ruby-gpgme, rubygem19-highline
+Description: Hiera backend that supports encrypted values.
+ As Debian Package.

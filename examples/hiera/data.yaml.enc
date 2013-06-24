@@ -1,0 +1,5 @@
+---
+aws.s3.credential: myid
+aws.s3.secret: ENC(jA0EAwMCTSgCvRDaSn1gySZf0nEJ+NI7DtFm8TF7ISwnovhbVdTtGV8BDvW3p32XzCHeVUi+9A==)
+aws.route53.secret: ENC(jA0EAwMCGOZCWXIE6qhgySYyE5NHvedWmujPg8uAm7l9lRrInUSg6IH5YigXowTeZxR6p5hshw==)
+aws.route53.credentail: myid

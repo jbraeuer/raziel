@@ -1,0 +1,76 @@
+hiera-yamlenc (0.7.1) unstable; urgency=low
+
+  * Version bump.
+
+ -- Jens Braeuer <jens.braeuer@commercetools.de>  Sat, 19 Feb 2013 10:28:07 +0000
+
+hiera-yamlenc (0.7.0) unstable; urgency=low
+
+  * Package for both Ruby1.8 and Ruby1.9.
+  * Start of Ruby1.9 only development
+
+ -- Jens Braeuer <jens.braeuer@commercetools.de>  Sat, 19 Feb 2013 10:28:07 +0000
+
+hiera-yamlenc (0.6.2) unstable; urgency=low
+
+  * Add dependency to highland ruby gem
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Fri, 18 Jan 2013 10:28:07 +0000
+
+hiera-yamlenc (0.6.1) precise; urgency=low
+
+  * Fix leak
+
+ -- Jens Braeuer <jens.braeuer@commercetools.de>  Thu, 06 Dec 2012 22:10:51 +0000
+
+hiera-yamlenc (0.6) precise; urgency=low
+
+  * Support for en- and decryption of any nested values
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Wed, 19 Dec 2012 10:30:10 +0000
+
+hiera-yamlenc (0.5.2) precise; urgency=low
+
+  * Code clean up
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Thu, 06 Dec 2012 22:10:51 +0000
+
+hiera-yamlenc (0.5.1) precise; urgency=low
+
+  * Fix output problem.
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Thu, 06 Dec 2012 17:39:49 +0000
+
+hiera-yamlenc (0.5.0) precise; urgency=low
+
+  * Print info about StyledYAML only in debug mode
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Thu, 06 Dec 2012 17:22:00 +0000
+
+hiera-yamlenc (0.4.0) precise; urgency=low
+
+  * Add dependency to ruby-gpgme
+  * Put files into hiera gem path directly
+  * For hiera call don't surround decrypted values with PLAIN()
+  * Support to run on ruby 1.8 (StyledYAML)
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Thu, 06 Dec 2012 17:13:39 +0000
+
+hiera-yamlenc (0.3.0) precise; urgency=low
+
+  * Ask for password on hiera encryption as it has to decrypt the password.
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Thu, 06 Dec 2012 14:53:24 +0000
+
+hiera-yamlenc (0.2.0) precise; urgency=low
+
+  * Support to enter passphrase when decrypting.
+  * Trust all keys on encrypt
+
+ -- Hajo Eichler <hajo.eichler@commercetools.de>  Thu, 06 Dec 2012 14:10:04 +0000
+
+hiera-yamlenc (0.1.0) unstable; urgency=low
+
+  * Packaged as debian package
+
+ -- Jens Braeuer <braeuer.jens@googlemail.com>  Wed, 05 Dec 2012 11:11:11 +0100

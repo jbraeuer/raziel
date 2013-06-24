@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_install:
+	mkdir -p    $$(pwd)/debian/hiera-yamlenc/usr/lib/ruby/vendor_ruby/
+	cp -r lib/* $$(pwd)/debian/hiera-yamlenc/usr/lib/ruby/vendor_ruby/

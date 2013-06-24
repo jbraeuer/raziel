@@ -1,0 +1,6 @@
+---
+mail.user: automation@commercetools.de
+x: ENC(jA0EAwMCsYQ4Nyhcgx9gySZ1Z5HPMDbSxI9TL11UrSbIxApQNeZ+uMJqwkrTNwKgs4qkD5FDgA==)
+net.trusted:
+- 1.2.3.4
+- 8.8.8.8

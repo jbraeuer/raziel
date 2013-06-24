@@ -1,0 +1,7 @@
+*~
+*.key
+*.plain
+debian/files
+debian/hiera-yamlenc*
+tmp/
+.gnupg/random_seed
