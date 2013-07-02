@@ -26,7 +26,7 @@ Raziel comes with two parts
 
 ## Current state
 
-Raziel is used in production since December 2013. It's been used on 5
+Raziel is used in production since December 2012. It's been used on 5
 Puppetmasters and ~70 servers.
 
 Raziel currently just works, but it could need some love. It started
