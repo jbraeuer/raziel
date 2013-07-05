@@ -68,6 +68,14 @@ eos
 
     @options[:cmd] = args[0]
     @options[:path] = args[1]
+
+    [ENC, PLAIN, KEY, KEYENC].each do |ext|
+      if @options[:path].end_with? ext
+        @options[:path] = @options[:path][0..-(ext.length + 2)]
+        break
+      end
+    end
+
     return self
   end
 
