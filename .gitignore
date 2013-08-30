@@ -5,3 +5,4 @@ debian/files
 debian/hiera-yamlenc*
 tmp/
 .gnupg/random_seed
+.gnupg/trustdb.gpg
