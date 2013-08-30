@@ -37,6 +37,7 @@ class RazielTool
 Usage: #{__FILE__} cmd <path>
 
 Supported commands:
+  view        Decrypt & View - config
   edit        Decrypt, Edit, Encrypt - config
   key:edit    Decrypt, Edit, Encrypt - key settings
 
@@ -177,6 +178,12 @@ eos
     end
   end
 
+  def view(path)
+    decrypt(path)
+    cmd = "#{ENV["EDITOR"]} '#{path}.#{PLAIN}'"
+    system *cmd
+  end
+
   def key_edit(path)
     key_decrypt(path)
     cmd = "#{ENV["EDITOR"]} '#{path}.#{KEY}'"
@@ -202,6 +209,8 @@ eos
       key_decrypt(@options[:path])
     when 'key:edit'
       key_edit(@options[:path])
+    when 'view'
+      view(@options[:path])
     else
       raise "Unknown command"
     end
