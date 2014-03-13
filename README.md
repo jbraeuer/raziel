@@ -46,14 +46,12 @@ Basic Ruby Version Manager (RVM) setup
   - make the system Ruby the default (otherwise may get errors with Vagrant, etc): `rvm reset`
 - Raziel was NOT tested with Ruby 2.0 - happy to see your feedback and pull requests
 
-- `brew install gpgme`
-- GEMs to install
-  - gpgme
-  - cucumber
-  - aruba
-  - ptools
-  - highline
-  - `cd <raziel.git> && gem install <GEM>`
+```bash
+brew install gpgme
+gem install gpgme -v 2.0.2
+gem install aruba cucumber ptools highline
+```
+
 - make sure Ruby 1.9.3 is the active version
 
 ## Ubuntu
